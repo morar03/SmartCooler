@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
-#include "./Functionality/Functionality.h"
+#include "./CyclicFunctions/CyclicFunctions.h"
+
 
 
 
@@ -12,16 +13,12 @@ void setup()
     InitValueDatabase();
     initRadioModule();
     InitFunctionality();
+  
 }
 
-void loop()
-{
-   if (getEvent_ON_OFF_Firebase() == True) {
-        vCheckTemperatureAndUpdateInFirebase();
-        vControlCooler();
-    }else{
-        vCheckTemperatureAndUpdateInFirebase();
-        digitalWrite(PinPowerCooler, HIGH);
-    }
+void loop(){
+  unsigned long currentTime = millis();
+  cyclicFunction90s(currentTime);
+  cyclicFunction1s(currentTime);
 }
    

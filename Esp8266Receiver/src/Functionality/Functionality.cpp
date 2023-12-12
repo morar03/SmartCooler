@@ -1,35 +1,54 @@
 #include "./Functionality.h"
 
-double doubleCurentTemperatureValue;
-static double lastTemperatureValue;
-static unsigned long lastCallTime = 0;
+float floatCurentTemperatureValue;
+static float lastTemperatureValue;
 
 void InitFunctionality(){
     pinMode(PinPowerCooler, OUTPUT);
     digitalWrite(PinPowerCooler, HIGH);
 }
 
-
 void vCheckTemperatureAndUpdateInFirebase(){
-    if (getAndConvertRadioMessage()){
-        if ((lastTemperatureValue/1 )!= (doubleCurentTemperatureValue/1)){
-            setStatusLive_Temperature_Firebase(doubleCurentTemperatureValue);
-            lastTemperatureValue = doubleCurentTemperatureValue;
+    static int counter;
+    if (getAndConvertRadioMessage(&floatCurentTemperatureValue)){
+        counter = 0;
+        float averageTemp = lastTemperatureValue-floatCurentTemperatureValue;
+        if ((averageTemp >= 0.5 ) or (averageTemp <= -0.5)){
+            float rounding = std::round(floatCurentTemperatureValue * 2) / 2;
+            setStatusLive_Temperature_Firebase(rounding);
+            lastTemperatureValue = rounding;
         }
+        
     }else{
-        digitalWrite(PinPowerCooler, HIGH);
+        counter++;
+        if (counter >= debounce){
+            vAlertRadio();
+            lastTemperatureValue = 99;
+        }  
     }
 }
 
 void vControlCooler(){
+    float TemperatureSet = getStatusSet_Temperature_Firebase();
+    bool coolerPower = getEvent_ON_OFF_Firebase();
     
-    double TemperatureSet = getStatusSet_Temperature_Firebase();
-    if (millis() - lastCallTime >= 1000){
-        if (TemperatureSet <= doubleCurentTemperatureValue ){
-             digitalWrite(PinPowerCooler, HIGH);
+    Serial.println("---------------------");
+    Serial.println(TemperatureSet);
+    Serial.println(floatCurentTemperatureValue);
+    Serial.println("---------------------");
+
+    if (coolerPower == True) {
+        if (TemperatureSet <= floatCurentTemperatureValue ){
+            digitalWrite(PinPowerCooler, HIGH);
+            Serial.println("---------INTRA PE HIGH------------");
         }else{
             digitalWrite(PinPowerCooler, LOW);
-        }
-        lastCallTime = millis();
-    } 
+            Serial.println("---------INTRA PE LOW------------");
+        }    
+    }else if (coolerPower == False){
+        digitalWrite(PinPowerCooler, LOW);
+    }     
 }
+
+
+

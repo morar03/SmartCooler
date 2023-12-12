@@ -3,9 +3,8 @@
 #include <iostream>
 #include <string>
 #include "Arduino.h"
-
-
-
+#include "./NetworkConnection/NetworkConnection.h"
 
 void initRadioModule(void);
-bool getAndConvertRadioMessage(void);
+bool getAndConvertRadioMessage(float* temperatureValue);
+void vAlertRadio(void);

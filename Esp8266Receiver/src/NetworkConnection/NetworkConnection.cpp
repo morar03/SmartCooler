@@ -5,7 +5,7 @@
 const std::string SeriesDevice = Serial_Number_Device;
 
 
-const std::string RouteTriggerEvent_ON_OFF_Firebase = ConcatRouteDevices(SeriesDevice, "/eventTrigger_ON_OFF_Firebase");
+const std::string RouteCoolerPower_ON_OFF_Firebase = ConcatRouteDevices(SeriesDevice, "/CoolerPower_ON_OFF_Firebase");
 const std::string RouteStatusLive_Temperature_Firebase = ConcatRouteDevices(SeriesDevice,"/liveStatus_Temperature_Firebase");
 const std::string RouteStatusSet_Temperature_Firebase = ConcatRouteDevices(SeriesDevice,"/setStatus_Temperature_Firebase");
 
@@ -65,35 +65,35 @@ void wifiConnect(void) {
 }
 
 void InitValueDatabase(void) {
-  Firebase.setBool(fbdo, RouteTriggerEvent_ON_OFF_Firebase, false);
-  Firebase.setDouble(fbdo, RouteStatusLive_Temperature_Firebase, 0);
-  Firebase.setDouble(fbdo, RouteStatusSet_Temperature_Firebase, 0);
+  Firebase.setBool(fbdo, RouteCoolerPower_ON_OFF_Firebase, true);
+  Firebase.setFloat(fbdo, RouteStatusLive_Temperature_Firebase, 8);
+  Firebase.setFloat(fbdo, RouteStatusSet_Temperature_Firebase, 8);
 }
 
 bool getEvent_ON_OFF_Firebase(void){
-  Firebase.getBool(fbdo, RouteTriggerEvent_ON_OFF_Firebase);
+  Firebase.getBool(fbdo, RouteCoolerPower_ON_OFF_Firebase);
   bool TriggerEvent_ON_OFF = fbdo.boolData();
   return TriggerEvent_ON_OFF;
 }
 
 void setEvent_ON_OFF_Firebase(bool event_ON_OFF_Firebase){
-  Firebase.setBool(fbdo, RouteTriggerEvent_ON_OFF_Firebase, event_ON_OFF_Firebase);
+  Firebase.setBool(fbdo, RouteCoolerPower_ON_OFF_Firebase, event_ON_OFF_Firebase);
 }
 
-double getStatusLive_Temperature_Firebase(void){
-  Firebase.getDouble(fbdo, RouteStatusLive_Temperature_Firebase);
-  return fbdo.doubleData();
+float getStatusLive_Temperature_Firebase(void){
+  Firebase.getFloat(fbdo, RouteStatusLive_Temperature_Firebase);
+  return fbdo.floatData();
 }
 
-void setStatusLive_Temperature_Firebase(double StatusLiveTemperature){
-  Firebase.setDouble(fbdo,RouteStatusLive_Temperature_Firebase, StatusLiveTemperature);
+void setStatusLive_Temperature_Firebase(float StatusLiveTemperature){
+  Firebase.setFloat(fbdo,RouteStatusLive_Temperature_Firebase, StatusLiveTemperature);
 }
 
-double getStatusSet_Temperature_Firebase(void){
-  Firebase.getString(fbdo, RouteStatusSet_Temperature_Firebase);
-  std:: string Temperature = fbdo.stringData().c_str();
+float getStatusSet_Temperature_Firebase(void){
+  Firebase.getFloat(fbdo, RouteStatusSet_Temperature_Firebase);
+  float Temperature = fbdo.floatData();
 
-  return StringToDouble(Temperature);
+  return Temperature;
 } 
 
 std::string ConcatRouteDevices(std::string string1, std::string string2){
@@ -103,8 +103,8 @@ std::string ConcatRouteDevices(std::string string1, std::string string2){
    return RouteConcat;
  }
 
-double StringToDouble(std::string string){
-  double number = std::stod(string);
+float StringToFloat(std::string string){
+  float number = std::stod(string);
   return number;
  };
 

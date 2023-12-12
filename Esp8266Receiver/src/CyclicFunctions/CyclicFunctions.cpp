@@ -1,8 +1,8 @@
 #include "./CyclicFunctions.h"
 
 
-unsigned long lastTime90s  = 90000U;
-unsigned long lastTime1s  = 1000U; 
+unsigned long lastTime90s  = 90000;
+unsigned long lastTime1s  = 1000; 
 
 void cyclicFunction90s(unsigned long currentTime) {
   if (currentTime - lastTime90s >= interval90s) {

@@ -1,7 +1,7 @@
 #include "./Functionality.h"
 
 float floatCurentTemperatureValue;
-static float lastTemperatureValue;
+static float lastTemperatureValue = 10;
 
 void InitFunctionality(){
     pinMode(PinPowerCooler, OUTPUT);
@@ -31,9 +31,11 @@ void vCheckTemperatureAndUpdateInFirebase(){
 void vControlCooler(){
     float TemperatureSet = getStatusSet_Temperature_Firebase();
     bool coolerPower = getEvent_ON_OFF_Firebase();
-    
+
     Serial.println("---------------------");
+    Serial.print("Temperatura setata: ");
     Serial.println(TemperatureSet);
+    Serial.print("Temperatura live: ");
     Serial.println(floatCurentTemperatureValue);
     Serial.println("---------------------");
 

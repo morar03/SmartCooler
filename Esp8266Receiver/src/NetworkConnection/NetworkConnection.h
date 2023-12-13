@@ -32,7 +32,7 @@
 #define actionDoorPin D1
 
 // Size allocation for the value in EEPROM
-#define EEPROM_SIZE 1
+#define EEPROM_SIZE 4
 
 // Address start for the value in EEPROM
 #define EEPROM_First_Value 0
@@ -52,7 +52,7 @@ bool getEvent_ON_OFF_Firebase(void);
 void setEvent_ON_OFF_Firebase(bool event_ON_OFF_Firebase);
 float getStatusLive_Temperature_Firebase(void);
 void setStatusLive_Temperature_Firebase(float StatusLiveTemperature);
-void ISRButtonDetect();
+void ISRButtonDetect(void);
 std::string ConcatRouteDevices(std::string string1, std::string string2);
 float StringToFloat(std::string string);
 float getStatusSet_Temperature_Firebase(void);

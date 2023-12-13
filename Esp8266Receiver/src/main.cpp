@@ -6,8 +6,8 @@
 
 
 void setup()
-{
-    Serial.begin(9600);	// Debugging only
+{   
+    Serial.begin(115200);	// Debugging only
     EEPROM.begin(EEPROM_SIZE);
     wifiConnect();
     InitValueDatabase();

@@ -22,10 +22,10 @@ unsigned long last_button_time = 0;
 
 void wifiConnect(void) {
 
+  
   // Uncomment and run it once, if you want to erase all the stored information
   // wifiManager.resetSettings();
   WiFi.mode(WIFI_STA);
-  pinMode(LED_BUILTIN, OUTPUT);
 
   //Button change form AP in STA
   pinMode(APSTAbutton, INPUT_PULLUP);
@@ -33,19 +33,19 @@ void wifiConnect(void) {
   // Interrupt for change value(buttonStatus) from EEPROM
   attachInterrupt(digitalPinToInterrupt(APSTAbutton), ISRButtonDetect, FALLING); // trigger when button pressed
   int buttonStatus;
+  
   // Get Value from EEPROM
-  EEPROM.get(EEPROM_First_Value, buttonStatus); 
+  EEPROM.get(EEPROM_First_Value, buttonStatus);
+
+
 
   if (buttonStatus == True){
     Serial.println("Button Reset Detected");
-    digitalWrite(LED_BUILTIN, LOW);
     wifiManager.startConfigPortal("Smart Fridge AP");
-    digitalWrite(LED_BUILTIN, HIGH);
     EEPROM.put(EEPROM_First_Value, False);
     EEPROM.commit();
   }else {
     Serial.println("Button Reset NO Detected");
-    digitalWrite(LED_BUILTIN, HIGH);
     wifiManager.autoConnect("Smart Fridge AP");
   }
   
@@ -66,7 +66,7 @@ void wifiConnect(void) {
 
 void InitValueDatabase(void) {
   Firebase.setBool(fbdo, RouteCoolerPower_ON_OFF_Firebase, true);
-  Firebase.setFloat(fbdo, RouteStatusLive_Temperature_Firebase, 8);
+  Firebase.setFloat(fbdo, RouteStatusLive_Temperature_Firebase, 20);
   Firebase.setFloat(fbdo, RouteStatusSet_Temperature_Firebase, 8);
 }
 
@@ -110,7 +110,7 @@ float StringToFloat(std::string string){
 
 
 
-void ICACHE_RAM_ATTR ISRButtonDetect(){
+void IRAM_ATTR ISRButtonDetect(){
   button_time = millis();
   int buttonStatus;
   if (button_time - last_button_time > 500)

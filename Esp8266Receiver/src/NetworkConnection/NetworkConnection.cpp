@@ -26,6 +26,7 @@ void wifiConnect(void) {
   // Uncomment and run it once, if you want to erase all the stored information
   // wifiManager.resetSettings();
   WiFi.mode(WIFI_STA);
+  pinMode(LED_BUILTIN, OUTPUT);
 
   //Button change form AP in STA
   pinMode(APSTAbutton, INPUT_PULLUP);
@@ -39,14 +40,17 @@ void wifiConnect(void) {
 
 
 
-  if (buttonStatus == True){
+ if (buttonStatus == True){
     Serial.println("Button Reset Detected");
-    wifiManager.startConfigPortal("Smart Fridge AP");
+    digitalWrite(LED_BUILTIN, LOW);
+    wifiManager.startConfigPortal("Smart Cooler AP");
+    digitalWrite(LED_BUILTIN, HIGH);
     EEPROM.put(EEPROM_First_Value, False);
     EEPROM.commit();
   }else {
     Serial.println("Button Reset NO Detected");
-    wifiManager.autoConnect("Smart Fridge AP");
+    digitalWrite(LED_BUILTIN, HIGH);
+    wifiManager.autoConnect("Smart Cooler AP");
   }
   
   // set custom ip for portal
@@ -67,7 +71,7 @@ void wifiConnect(void) {
 void InitValueDatabase(void) {
   Firebase.setBool(fbdo, RouteCoolerPower_ON_OFF_Firebase, true);
   Firebase.setFloat(fbdo, RouteStatusLive_Temperature_Firebase, 20);
-  Firebase.setFloat(fbdo, RouteStatusSet_Temperature_Firebase, 8);
+  Firebase.setFloat(fbdo, RouteStatusSet_Temperature_Firebase, 6);
 }
 
 bool getEvent_ON_OFF_Firebase(void){

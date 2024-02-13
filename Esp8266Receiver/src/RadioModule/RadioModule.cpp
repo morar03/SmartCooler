@@ -18,6 +18,8 @@ bool getAndConvertRadioMessage(float* temperatureValue){
         Serial.println(receivedMessage);
         // Conversion from std::string to double
         *temperatureValue = receivedMessage.toFloat();
+        Serial.print("Conversia Mesajului: ");
+        Serial.println(*temperatureValue);
         return true; // Conversion succesfull
     }
     return false;

@@ -7,6 +7,7 @@
 
 void setup()
 {   
+    ESP.restart();
     Serial.begin(115200);	// Debugging only
     EEPROM.begin(EEPROM_SIZE);
     wifiConnect();

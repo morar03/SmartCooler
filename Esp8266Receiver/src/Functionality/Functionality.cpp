@@ -5,7 +5,7 @@ static float lastTemperatureValue = 10;
 
 void InitFunctionality(){
     pinMode(PinPowerCooler, OUTPUT);
-    digitalWrite(PinPowerCooler, HIGH);
+    digitalWrite(PinPowerCooler, LOW);
 }
 
 void vCheckTemperatureAndUpdateInFirebase(){

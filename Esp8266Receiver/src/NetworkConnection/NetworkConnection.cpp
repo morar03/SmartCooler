@@ -38,19 +38,20 @@ void wifiConnect(void) {
   // Get Value from EEPROM
   EEPROM.get(EEPROM_First_Value, buttonStatus);
 
+  wifiManager.setConfigPortalTimeout(120);
 
+ if (False == buttonStatus){
+    Serial.println("Button Reset NO Detected");
+    digitalWrite(LED_BUILTIN, HIGH);
+    wifiManager.autoConnect("Smart Cooler AP");
 
- if (buttonStatus == True){
+  }else if(True == buttonStatus) {
     Serial.println("Button Reset Detected");
     digitalWrite(LED_BUILTIN, LOW);
     wifiManager.startConfigPortal("Smart Cooler AP");
     digitalWrite(LED_BUILTIN, HIGH);
     EEPROM.put(EEPROM_First_Value, False);
     EEPROM.commit();
-  }else {
-    Serial.println("Button Reset NO Detected");
-    digitalWrite(LED_BUILTIN, HIGH);
-    wifiManager.autoConnect("Smart Cooler AP");
   }
   
   // set custom ip for portal

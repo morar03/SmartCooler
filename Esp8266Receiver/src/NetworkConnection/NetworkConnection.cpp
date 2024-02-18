@@ -11,62 +11,56 @@ const std::string RouteStatusSet_Temperature_Firebase = ConcatRouteDevices(Serie
 
 // WiFiManager
 // Local intialization. Once its business is done, there is no need to keep it around
-  WiFiManager wifiManager;
+WiFiManager wifiManager;
 
 //Define Firebase Data object
-  FirebaseData fbdo;
+FirebaseData fbdo;
 
-//variables to keep track of the timing of recent interrupts
-unsigned long button_time = 0;  
-unsigned long last_button_time = 0; 
+bool static FailConnectWifi = False;
 
 void wifiConnect(void) {
-
   
   // Uncomment and run it once, if you want to erase all the stored information
   // wifiManager.resetSettings();
-  WiFi.mode(WIFI_STA);
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUILTIN_AUX, OUTPUT);
+  delay(2000);
 
   //Button change form AP in STA
-  pinMode(APSTAbutton, INPUT_PULLUP);
-
-  // Interrupt for change value(buttonStatus) from EEPROM
-  attachInterrupt(digitalPinToInterrupt(APSTAbutton), ISRButtonDetect, FALLING); // trigger when button pressed
-  int buttonStatus;
+  pinMode(APSTAbutton, INPUT);
   
-  // Get Value from EEPROM
-  EEPROM.get(EEPROM_First_Value, buttonStatus);
-
-  wifiManager.setConfigPortalTimeout(120);
-
- if (False == buttonStatus){
-    Serial.println("Button Reset NO Detected");
-    digitalWrite(LED_BUILTIN, HIGH);
-    wifiManager.autoConnect("Smart Cooler AP");
-
-  }else if(True == buttonStatus) {
-    Serial.println("Button Reset Detected");
-    digitalWrite(LED_BUILTIN, LOW);
-    wifiManager.startConfigPortal("Smart Cooler AP");
-    digitalWrite(LED_BUILTIN, HIGH);
-    EEPROM.put(EEPROM_First_Value, False);
-    EEPROM.commit();
+  wifiManager.setConfigPortalTimeout(180);
+  digitalWrite(LED_BUILTIN_AUX, LOW);
+  if(!wifiManager.autoConnect("Smart Cooler AP")) {
+    FailConnectWifi = True;
   }
-  
-  // set custom ip for portal
-  //wifiManager.setAPConfig(IPAddress(10,0,1,1), IPAddress(10,0,1,1), IPAddress(255,255,255,0));
-  // fetches ssid and pass from eeprom and tries to connect
-  // wifiManager.autoConnect("AutoConnectAP");
-  // wifiManager.startConfigPortal("AccesConnect2");
-  // or use this for auto generated name ESP + ChipID
-  //wifiManager.autoConnect();
-  
-  // if you get here you have connected to the WiFi
-  Serial.println("Connected to Wifi.");
 
-  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  Serial.println("Connected to Database.");
+  if (!FailConnectWifi){
+    // if you get here you have connected to the WiFi
+    Serial.println("Connected to Wifi.");
+    Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+    Serial.println("Connected to Database.");
+    digitalWrite(LED_BUILTIN_AUX, HIGH);
+  }
+}
+
+void vcheckNetworkButtonConnection(void){
+  if ( digitalRead(APSTAbutton) == LOW ) {
+     delay(100);
+    if( digitalRead(APSTAbutton) == LOW ){
+      Serial.println("Button Pressed");
+      delay(3000); // STM delay hold
+      if( digitalRead(APSTAbutton) == LOW ){
+        Serial.println("Start Config AP Smart Cooler");
+        digitalWrite(LED_BUILTIN_AUX, LOW);
+        wifiManager.startConfigPortal("Smart Cooler AP");
+        ESP.restart();  
+      }
+    } 
+  }
+}
+
+bool getStatusConnection(void){
+  return !FailConnectWifi;
 }
 
 void InitValueDatabase(void) {
@@ -112,25 +106,3 @@ float StringToFloat(std::string string){
   float number = std::stod(string);
   return number;
  };
-
-
-
-void IRAM_ATTR ISRButtonDetect(){
-  button_time = millis();
-  int buttonStatus;
-  if (button_time - last_button_time > 500)
-  {
-    EEPROM.get(EEPROM_First_Value, buttonStatus);
-
-    if (buttonStatus == True){
-      EEPROM.put(EEPROM_First_Value, False);
-      EEPROM.commit();
-      ESP.restart();
-    }else {
-      EEPROM.put(EEPROM_First_Value, True);
-      EEPROM.commit();
-      ESP.restart();
-    }
-    last_button_time = button_time;
-  }
-}

@@ -2,24 +2,28 @@
 
 #include "./CyclicFunctions/CyclicFunctions.h"
 
-
-
-
 void setup()
 {   
-    ESP.restart();
-    Serial.begin(115200);	// Debugging only
-    EEPROM.begin(EEPROM_SIZE);
+    delay(1000);
+    Serial.begin(9600);	// Debugging only
     wifiConnect();
     InitValueDatabase();
     initRadioModule();
     InitFunctionality();
-  
 }
 
 void loop(){
   unsigned long currentTime = millis();
-  cyclicFunction90s(currentTime);
-  cyclicFunction1s(currentTime);
+  if (getStatusConnection()){
+    cyclicFunction90s(currentTime);
+    cyclicFunction1s(currentTime);
+  }else{
+    digitalWrite(PinPowerCooler, CoolerOn);
+    vBlinkLEDAlert();
+    if (currentTime >= interval300s){
+      ESP.reset();
+    }
+  }
+  vcheckNetworkButtonConnection();
 }
    

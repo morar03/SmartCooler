@@ -1,8 +1,9 @@
 #include "./CyclicFunctions.h"
 
+unsigned long lastTime300s  = 0;
+unsigned long lastTime90s  = 0;
+unsigned long lastTime10s  = 0;
 
-unsigned long lastTime90s  = 90000;
-unsigned long lastTime1s  = 1000; 
 
 void cyclicFunction90s(unsigned long currentTime) {
   if (currentTime - lastTime90s >= interval90s) {
@@ -17,10 +18,10 @@ void cyclicFunction90s(unsigned long currentTime) {
 }
 
 void cyclicFunction1s(unsigned long currentTime) {
-  if (currentTime - lastTime1s >= interval1s) {
-    lastTime1s = currentTime;
+  if (currentTime - lastTime10s >= interval10s) {
+    lastTime10s = currentTime;
 
-//////////--------1.000MS--------//////////
+//////////--------10.000MS--------//////////
 
     vCheckTemperatureAndUpdateInFirebase();
 

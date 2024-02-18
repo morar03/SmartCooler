@@ -7,4 +7,3 @@
 
 void initRadioModule(void);
 bool getAndConvertRadioMessage(float* temperatureValue);
-void vAlertRadio(void);

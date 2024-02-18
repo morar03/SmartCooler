@@ -1,24 +1,24 @@
 #include "./Functionality.h"
 
 float floatCurentTemperatureValue;
-static float lastTemperatureValue = 10;
+static float lastTemperatureValue = 90;
 
 void InitFunctionality(){
     pinMode(PinPowerCooler, OUTPUT);
-    digitalWrite(PinPowerCooler, LOW);
+    digitalWrite(PinPowerCooler, CoolerOff);
 }
 
 void vCheckTemperatureAndUpdateInFirebase(){
     static int counter;
     if (getAndConvertRadioMessage(&floatCurentTemperatureValue)){
         counter = 0;
+        digitalWrite(LED_BUILTIN_AUX, HIGH);
         float averageTemp = lastTemperatureValue-floatCurentTemperatureValue;
         if ((averageTemp >= 0.5 ) or (averageTemp <= -0.5)){
             float rounding = std::round(floatCurentTemperatureValue * 2) / 2;
             setStatusLive_Temperature_Firebase(rounding);
             lastTemperatureValue = rounding;
         }
-        
     }else{
         counter++;
         if (counter >= debounce){
@@ -41,16 +41,27 @@ void vControlCooler(){
 
     if (coolerPower == True) {
         if (TemperatureSet <= floatCurentTemperatureValue ){
-            digitalWrite(PinPowerCooler, HIGH);
-            Serial.println("---------INTRA PE HIGH------------");
+            digitalWrite(PinPowerCooler, CoolerOff);
+            Serial.println("---------INTRA PE CoolerOFF------------");
         }else{
-            digitalWrite(PinPowerCooler, LOW);
-            Serial.println("---------INTRA PE LOW------------");
+            digitalWrite(PinPowerCooler, CoolerOn);
+            Serial.println("---------INTRA PE CoolerON------------");
         }    
     }else if (coolerPower == False){
-        digitalWrite(PinPowerCooler, LOW);
+        digitalWrite(PinPowerCooler, CoolerOff);
     }     
 }
 
+void vAlertRadio(){
+    setStatusLive_Temperature_Firebase(99);
+    vBlinkLEDAlert();
+}
+
+void vBlinkLEDAlert(){
+    digitalWrite(LED_BUILTIN_AUX, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN_AUX, LOW);
+    delay(500);
+}
 
 

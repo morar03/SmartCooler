@@ -24,7 +24,3 @@ bool getAndConvertRadioMessage(float* temperatureValue){
     }
     return false;
 }
-
-void vAlertRadio(){
-    setStatusLive_Temperature_Firebase(99);
-}

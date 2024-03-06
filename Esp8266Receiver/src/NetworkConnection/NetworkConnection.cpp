@@ -26,7 +26,7 @@ void wifiConnect(void) {
   delay(2000);
 
   //Button change form AP in STA
-  pinMode(APSTAbutton, INPUT);
+  pinMode(APSTAbutton, INPUT_PULLUP);
   
   wifiManager.setConfigPortalTimeout(180);
   digitalWrite(LED_BUILTIN_AUX, LOW);
@@ -65,8 +65,8 @@ bool getStatusConnection(void){
 
 void InitValueDatabase(void) {
   Firebase.setBool(fbdo, RouteCoolerPower_ON_OFF_Firebase, true);
-  Firebase.setFloat(fbdo, RouteStatusLive_Temperature_Firebase, 20);
-  Firebase.setFloat(fbdo, RouteStatusSet_Temperature_Firebase, 6);
+  Firebase.setFloat(fbdo, RouteStatusLive_Temperature_Firebase, 99);
+  // Firebase.setFloat(fbdo, RouteStatusSet_Temperature_Firebase, 6);
 }
 
 bool getEvent_ON_OFF_Firebase(void){

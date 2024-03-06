@@ -4,12 +4,13 @@
 
 void setup()
 {   
-    delay(1000);
-    Serial.begin(9600);	// Debugging only
-    wifiConnect();
-    InitValueDatabase();
-    initRadioModule();
-    InitFunctionality();
+  delay(1000);
+  InitFunctionality();
+  Serial.begin(9600);	// Debugging only
+  wifiConnect();
+  InitValueDatabase();
+  initRadioModule();
+  
 }
 
 void loop(){
